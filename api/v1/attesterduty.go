@@ -24,6 +24,12 @@ import (
 	"github.com/pkg/errors"
 )
 
+type AttesterDutiesResponse struct {
+	DependentRoot       phase0.Root
+	ExecutionOptimistic bool
+	Data                []*AttesterDuty
+}
+
 // AttesterDuty is the data regarding which validators have the duty to attest in a slot.
 type AttesterDuty struct {
 	// PubKey is the public key of the validator that should attest.

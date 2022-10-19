@@ -209,7 +209,7 @@ func (s *Sleepy) SubmitAttestations(ctx context.Context, attestations []*phase0.
 
 // AttesterDuties obtains attester duties.
 // If validatorIndicess is nil it will return all duties for the given epoch.
-func (s *Sleepy) AttesterDuties(ctx context.Context, epoch phase0.Epoch, validatorIndices []phase0.ValidatorIndex) ([]*apiv1.AttesterDuty, error) {
+func (s *Sleepy) AttesterDuties(ctx context.Context, epoch phase0.Epoch, validatorIndices []phase0.ValidatorIndex) (*apiv1.AttesterDutiesResponse, error) {
 	s.sleep(ctx)
 	next, isNext := s.next.(consensusclient.AttesterDutiesProvider)
 	if !isNext {

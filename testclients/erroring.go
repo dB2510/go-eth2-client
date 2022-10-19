@@ -273,7 +273,7 @@ func (s *Erroring) SubmitSyncCommitteeMessages(ctx context.Context, messages []*
 
 // AttesterDuties obtains attester duties.
 // If validatorIndicess is nil it will return all duties for the given epoch.
-func (s *Erroring) AttesterDuties(ctx context.Context, epoch phase0.Epoch, validatorIndices []phase0.ValidatorIndex) ([]*apiv1.AttesterDuty, error) {
+func (s *Erroring) AttesterDuties(ctx context.Context, epoch phase0.Epoch, validatorIndices []phase0.ValidatorIndex) (*apiv1.AttesterDutiesResponse, error) {
 	if err := s.maybeError(ctx); err != nil {
 		return nil, err
 	}
