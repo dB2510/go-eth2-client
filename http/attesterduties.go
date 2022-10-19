@@ -75,7 +75,7 @@ func (s *Service) AttesterDuties(ctx context.Context, epoch phase0.Epoch, valida
 
 	return &api.AttesterDutiesResponse{
 		DependentRoot:       res,
-		ExecutionOptimistic: false,
-		Data:                nil,
+		ExecutionOptimistic: resp.ExecutionOptimistic,
+		Data:                resp.Data,
 	}, nil
 }
