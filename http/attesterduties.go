@@ -16,20 +16,24 @@ package http
 import (
 	"bytes"
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	api "github.com/attestantio/go-eth2-client/api/v1"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/pkg/errors"
 )
 
-type attesterDutiesJSON struct {
-	Data []*api.AttesterDuty `json:"data"`
+type attesterDutiesResponseJSON struct {
+	DependentRoot       string              `json:"dependent_root"`
+	ExecutionOptimistic bool                `json:"execution_optimistic"`
+	Data                []*api.AttesterDuty `json:"data"`
 }
 
 // AttesterDuties obtains attester duties.
-func (s *Service) AttesterDuties(ctx context.Context, epoch phase0.Epoch, validatorIndices []phase0.ValidatorIndex) ([]*api.AttesterDuty, error) {
+func (s *Service) AttesterDuties(ctx context.Context, epoch phase0.Epoch, validatorIndices []phase0.ValidatorIndex) (*api.AttesterDutiesResponse, error) {
 	var reqBodyReader bytes.Buffer
 	if _, err := reqBodyReader.WriteString(`[`); err != nil {
 		return nil, errors.Wrap(err, "failed to write validator index array start")
@@ -56,10 +60,22 @@ func (s *Service) AttesterDuties(ctx context.Context, epoch phase0.Epoch, valida
 		return nil, errors.New("failed to obtain attester duties")
 	}
 
-	var resp attesterDutiesJSON
+	var resp attesterDutiesResponseJSON
 	if err := json.NewDecoder(respBodyReader).Decode(&resp); err != nil {
 		return nil, errors.Wrap(err, "failed to parse attester duties response")
 	}
 
-	return resp.Data, nil
+	bytes, err := hex.DecodeString(strings.TrimPrefix(resp.DependentRoot, "0x"))
+	if err != nil {
+		return nil, err
+	}
+
+	var res phase0.Root
+	copy(res[:], bytes)
+
+	return &api.AttesterDutiesResponse{
+		DependentRoot:       res,
+		ExecutionOptimistic: false,
+		Data:                nil,
+	}, nil
 }

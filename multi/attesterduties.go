@@ -27,7 +27,7 @@ func (s *Service) AttesterDuties(ctx context.Context,
 	epoch phase0.Epoch,
 	validatorIndices []phase0.ValidatorIndex,
 ) (
-	[]*api.AttesterDuty,
+	*api.AttesterDutiesResponse,
 	error,
 ) {
 	res, err := s.doCall(ctx, func(ctx context.Context, client consensusclient.Service) (interface{}, error) {
@@ -43,5 +43,5 @@ func (s *Service) AttesterDuties(ctx context.Context,
 	if res == nil {
 		return nil, nil
 	}
-	return res.([]*api.AttesterDuty), nil
+	return res.(*api.AttesterDutiesResponse), nil
 }
